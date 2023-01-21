@@ -25,28 +25,16 @@ Simply include such file in the header of your HTML document.
 
 For example:
 
-:::: {.columns}
-
-::: {.column}
-**R Markdown** 
-
-```yaml
-output:
-  # ...
-  includes:
-    in_header: "../src/embed-js-outputs.html"
-```
-::: 
-
-::: {.column}
-**Quarto** 
-
-```yaml
-format:
-  # ...
-  include-in-header: "../src/embed-js-outputs.html"
-```
-
-::: 
-
-::::
+- **R Markdown**
+    ```yaml
+    output:
+      # ...
+      includes:
+        in_header: "../src/embed-js-outputs.html"
+    ```
+- **Quarto**
+    ```yaml
+    format:
+      # ...
+      include-in-header: "../src/embed-js-outputs.html"
+    ```

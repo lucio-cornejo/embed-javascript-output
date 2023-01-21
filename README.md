@@ -63,3 +63,8 @@ output will not be inserted properly into the webpage.
 This happens due to the HTML container of the chunk's
 code (specifically some `<pre>` tag) no longer having `js`
 as one of it classes, but `markdown` instead.
+
+- If you open any of the html files in the `examples` folder,
+they all work as intended when seen on a browser, but, 
+none of them include their JavaScript chunks outputs when
+seen on a *Viewer* window from RStudio or VS Code.

@@ -4,7 +4,7 @@ generated HTML document.
 
 - This implementation works for:
     - Quarto's `format: html` documents.
-    - R Markdown's Xaringan presentations. 
+    - R Markdown's Xaringan presentations and `output: html_document`.
 
 - Such **embedded JavaScript output** looks mostly
 similar to how it works by default with

@@ -352,7 +352,7 @@ color: #d14;
   // `output: html_document` required to
   // wait at most two seconds (for my pc and
   // example file in /examples).
-  document.onreadystatechange = function () {
+  document.addEventListener('readystatechange', function () {
     if (document.readyState == "complete") {
       const jsChunkStructure = 
         // Xaringan presentation
@@ -380,7 +380,7 @@ color: #d14;
         chunkResult(jsCode);
       });
     } 
-  }
+  });
 </script>
 
 <!-- 

@@ -1,0 +1,24 @@
+---
+title: JavaScript embedded Quarto
+format:
+  html:
+    include-in-header: "../src/embed-js-outputs.html"
+    highlight-style: dracula
+---
+
+```{r}
+print("This is an R script.")
+```
+
+```{js}
+//| echo: fenced
+console.log("This is a JavaScript script.")
+```
+
+```{js}
+const arr = [1, 2, 3];
+arr.unshift(4);
+arr
+```
+
+

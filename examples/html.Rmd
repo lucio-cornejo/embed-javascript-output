@@ -1,0 +1,25 @@
+---
+title: JavaScript embedded R Markdown
+output: 
+  html_document:
+    includes:
+      in_header: "../src/embed-js-outputs.html"
+---
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+```{js}
+const arr = [...Array(5).keys()];
+arr;
+```
+
+```{js}
+let x = 0;
+for (let i=1; i<2; i++) {
+  x += i;
+}
+x
+```

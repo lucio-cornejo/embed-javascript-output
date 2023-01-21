@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>JavaScript embedded Xaringan</title>
+    <meta charset="utf-8" />
+    <script src="xaringan_files/header-attrs-2.20/header-attrs.js"></script>
+    <link href="xaringan_files/remark-css-0.0.1/rladies.css" rel="stylesheet" />
+    <script src="xaringan_files/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="xaringan_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="xaringan_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="xaringan_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="xaringan_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <!-- 
+      Insert JavaScript chunk outputs into the website, 
+      via a partly equal procedure as js4shiny:
+      https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/inst/redirect/redirectConsoleLog.js
+    -->
+    <script>
+      const nodeListInclude = ['id', 'tagName', 'className', 'childNodes']
+
+      function domToObj (del) {
+        // https://stackoverflow.com/a/46881092/2022615
+        const obj = {}
+        for (const prop of nodeListInclude) {
+          if (del[prop] instanceof NodeList) {
+            obj[prop] = Array.from(del[prop])
+          } else {
+            obj[prop] = del[prop]
+          }
+        }
+        return obj
+      }
+
+      function escapeHTML (string) {
+        return ('' + string)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+      }
+
+      const redirectLogger = (function (origConsole) {
+        const consoleEvent = new Event('consoleLog')
+        return function (logDiv, returnConsole = false) {
+          if (!logDiv) return origConsole
+          const console = {
+            log: function () {
+              // https://stackoverflow.com/a/45387558/2022615
+              let output = ''
+
+              for (const arg of arguments) {
+                if (arg instanceof Error) {
+                  output += '<span class="jslog-error">'
+                } else {
+                  output += `<span class="jslog-${typeof arg}">`
+                }
+
+                if (arg instanceof Node) {
+                  const argObj = domToObj(arg)
+                  output = output.replace('(object)', '(Node)')
+                  output += JSON.stringify(argObj, null, 2)
+                } else if (
+                  arg instanceof Error
+                ) {
+                  output += `[${arg.name}] ${arg.message}`
+                } else if (
+                  typeof arg === 'object' &&
+                  typeof JSON === 'object' &&
+                  typeof JSON.stringify === 'function'
+                ) {
+                  const outJsonString = JSON.stringify(arg)
+                  if (outJsonString.length < 60) {
+                    output += escapeHTML(outJsonString)
+                  } else {
+                    output += escapeHTML(JSON.stringify(arg, null, 2))
+                  }
+                } else {
+                  output += escapeHTML(arg)
+                }
+
+                // output += '</span>&nbsp;'
+                output += '</span>'
+              }
+
+              // logDiv.innerHTML += output + '<br>'
+              logDiv.innerHTML += output
+              logDiv.dispatchEvent(consoleEvent)
+              // origConsole.log.apply(undefined, arguments);
+            },
+            table: function (obj) {
+              let table = '<table><thead><tr><th>(index)</th><th>Values</th></tr></thead><tbody>'
+              for (const index in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, index)) {
+                  table += `<tr><td>${index}</td><td><code>${obj[index].toString()}</code></td></tr>`
+                }
+              }
+              table += '</tbody></table>'
+              logDiv.innerHTML += table + '<br>'
+              logDiv.dispatchEvent(consoleEvent)
+            },
+            clear: function () {
+              logDiv.innerHTML = ''
+            }
+          }
+
+          if (returnConsole) {
+            return (console)
+          };
+
+          return function (code) {
+            try {
+              const ret = eval(code)
+              if (typeof ret !== 'undefined') console.log(ret)
+            } catch (error) {
+              console.log(error)
+            }
+          }
+        }
+      })(window.console)
+    </script>
+
+    <!-- 
+      To obtain the code of the JavaScript chunks,
+      we could not rely on the method from js4shiny
+      (https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/R/knitr.R)
+      because in that case the code gets extracted from the 
+      rendered document's markdown file.
+
+      Therefore, we'll extract the chunks' JavaScript code
+      via the HTML container into which they are inserted
+      into (usually a div or a pre HTML element).
+    -->
+    <script>
+      // Adding a DOMContentLoaded event listener
+      // to document worked fine, but only for
+      // Quarto and Xaringan ... R Markdown's
+      // `output: html_document` required to
+      // wait at most two seconds (for my pc and
+      // example file in /examples).
+      document.onreadystatechange = function () {
+        if (document.readyState == "complete") {
+          const jsChunkStructure = 
+            // Xaringan presentation
+            typeof slideshow !== 'undefined'
+              ? 'pre:has(code.js)' 
+              // R Markdown's `output: html_document`
+              : document.querySelector('div.sourceCode') === null 
+              ? 'pre:has(code.javascript)' 
+              // Quarto's `format: html`
+              : 'div.sourceCode:has(pre.js)';
+
+          const jsChunks = document.querySelectorAll(jsChunkStructure);
+          jsChunks.forEach( (chunk) => {
+            // https://stackoverflow.com/questions/31894197/
+            const jsCode = chunk.innerHTML
+              .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, "")
+              .trim()
+              .replaceAll("&gt;", ">")   // Deal with use of Arrow Functions.
+              .replaceAll("&lt;", "<");  // Deal with < as a math operation.
+
+            // Create container for the JavaScript outputs in text form
+            const outputContainer = chunk;
+            outputContainer.innerHTML += '<div class="jslog-output"></div>';
+            const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
+            chunkResult(jsCode);
+          });
+        } 
+      }
+    </script>
+
+    <!-- 
+      Not only will the JavaScript chunks' outputs will
+      be styled for aesthetic reasons, but also due to
+      the small changes we applied to gadenbuie's code.
+      For example, using `display: flex` instead of
+      inserting `<br>` elements into each inserted span.
+    -->
+    <style>
+      @import url('https://fonts.cdnfonts.com/css/cascadia-code');
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100&display=swap');
+
+      /* Container for js code outputs */
+      .jslog-output {
+        color: black;
+        display: flex;
+        flex-direction: column;
+        font-size: initial;
+        white-space: break-spaces;
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .jslog-output::before {
+        margin: 0.4em;
+        white-space: pre;
+        content: "Output: \a";
+        font-family: 'Cascadia Code', sans-serif;
+      }
+      /* Lines of generated output */
+      .jslog-output > span {
+        padding: 0.1em 0.4em;
+      }
+      .jslog-output > span:hover {
+        font-weight: 900;
+        transition: all 200ms;
+        background-color: rgba(255, 255, 0, 0.5);
+      }
+
+
+      /* 
+        ----------------- Xaringan -----------------
+        Add scrolling for remark slides if their
+        content exceeds the initial slide dimensions.
+      */
+      div.remark-slide-scaler { overflow: auto; }
+      .remark-slide-content .jslog-output { 
+        background-color:  rgb(248, 248, 240); 
+      }
+
+
+      /* 
+        ------------ Quarto book ------------
+        Create illusion of empty space between
+        the chunk's code and its output.
+      */
+      .jslog-output {
+        --empty-upper-space: 12px;
+        --empty-lower-space: calc(2*var(--empty-upper-space));
+        padding-top: var(--empty-upper-space);
+        padding-bottom: var(--empty-lower-space);
+        background: linear-gradient(
+          to bottom, 
+          var(--quarto-body-bg) var(--empty-upper-space),
+          rgb(248, 248, 240) calc(0.5px + var(--empty-upper-space)),
+          rgb(248, 248, 240) calc(100% - var(--empty-lower-space)),
+          var(--quarto-body-bg) var(--empty-lower-space)
+        );
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# JavaScript embedded Xaringan
+
+---
+
+class: middle, center
+
+
+
+## Show the results of JavaScript chunks  into the Xaringan slides created
+
+---
+
+
+```js
+const arr = [1, 2]; 
+arr.push(3);
+arr
+```
+
+
+```js
+const text = "remark.js can still be useful,  even in this Quarto era.";
+text.replace("remark.js", "Xaringan");
+```
+
+
+```js
+document.addEventListener('click', () =&gt; {
+  const jsChunks = Array.from(document.querySelectorAll(
+    'pre:has(code.js)'
+  ));
+
+  jsChunks.forEach( chunk =&gt; {
+    chunk.style.filter = chunk.style.filter === 'invert(1)' ? 
+      'invert(0)' : 
+      'invert(1)'
+  });
+});
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "monokai",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

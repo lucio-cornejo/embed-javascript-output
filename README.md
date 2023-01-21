@@ -14,16 +14,14 @@ R, Python and Julia.
 [js4shiny](https://github.com/gadenbuie/js4shiny) 
 `R` package, and, was created due to the need
 of taking reproducible notes of the 
-book [JavaScriot for Data Science](https://third-bit.com/js4ds/).
+book [JavaScript for Data Science](https://third-bit.com/js4ds/).
 
 ## Installation
 
 Only the file `./src/embed-js-output.html` is required for
-this JavaScriot output embedding to work in your project.
+this JavaScript output embedding to work in your project.
 
-Simply include such file in the header of your HTML document.
-
-For example:
+**Simply include** such file in the header of your HTML document, like in the **examples** folder.
 
 - **R Markdown**
     ```yaml
@@ -38,3 +36,23 @@ For example:
       # ...
       include-in-header: "../src/embed-js-outputs.html"
     ```
+
+## Important caveats
+
+- The JavaScript code in each chunk **must use semicolon**
+to denote the end of a statement. If not, such code
+will not be evaluated properly.
+
+- In Quarto, if `echo: fenced` is used, the JavaScript code
+output will not be inserted properly into the webpage.
+This happens due to the HTML container of the chunk's
+code (specifically some `<pre>` tag) no longer having `js`
+as one of it classes, but `markdown` instead.
+
+- It's higly recommended that the JavaScript chunks whose
+output you don't want to be embedded in the page have
+`eval: false`, that is, that their code doesn't get executed.
+This due to a possible duplicate execution of JavaScript
+code chunks if `eval` is set to true, which can cause
+issues, for example, when *event listeners* are used,
+as they'd get registered twice.

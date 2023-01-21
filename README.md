@@ -43,12 +43,6 @@ this JavaScript output embedding to work in your project.
 to denote the end of a statement. If not, such code
 will not be evaluated properly.
 
-- In Quarto, if `echo: fenced` is used, the JavaScript code
-output will not be inserted properly into the webpage.
-This happens due to the HTML container of the chunk's
-code (specifically some `<pre>` tag) no longer having `js`
-as one of it classes, but `markdown` instead.
-
 - It's higly recommended that the JavaScript chunks whose
 output you don't want to be embedded in the page have
 `eval: false`, that is, that their code doesn't get executed.
@@ -56,3 +50,16 @@ This due to a possible duplicate execution of JavaScript
 code chunks if `eval` is set to true, which can cause
 issues, for example, when *event listeners* are used,
 as they'd get registered twice.
+
+- Due to having **rewritten** the `console.log` function,
+sometimes it does not work the same way as if it had been
+executed directly in the browser console. For example,
+`console.log(1, 2)` and *console.logging* a JavaScript
+object (to skim its entries perhaps) behave different
+to the standard.
+
+- In Quarto, if `echo: fenced` is used, the JavaScript code
+output will not be inserted properly into the webpage.
+This happens due to the HTML container of the chunk's
+code (specifically some `<pre>` tag) no longer having `js`
+as one of it classes, but `markdown` instead.

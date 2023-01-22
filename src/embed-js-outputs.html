@@ -133,9 +133,9 @@
           // R Markdown's `output: html_document`
           : document.querySelector('div.sourceCode') === null 
           ? 'pre:has(code.javascript)' 
-          // Quarto's `format: html`
-          : 'div.sourceCode:has(pre.js)';
-
+          // Quarto's `format: html` and js chunk, not ojs.
+          : 'div.sourceCode:has(pre.js):not(:has(+ div .observablehq))';
+    
       const jsChunks = document.querySelectorAll(jsChunkStructure);
       jsChunks.forEach( (chunk) => {
         // https://stackoverflow.com/questions/31894197/

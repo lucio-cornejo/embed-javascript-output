@@ -21,7 +21,10 @@ book [JavaScript for Data Science](https://third-bit.com/js4ds/).
 Only the file `./src/embed-js-output.html` is required for
 this JavaScript output embedding to work in your project.
 
-**Simply include** such file in the header of your HTML document, like in the **examples** folder.
+For R Markdown, it's not necessary to download such file,
+but; for Quarto, it seems to be necessary.
+
+The yaml section of the respective .Rmd or .qmd files should look like these:
 
 - **R Markdown**
     ```yaml

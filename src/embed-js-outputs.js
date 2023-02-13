@@ -219,3 +219,5 @@ div.remark-slide-scaler { overflow: auto; }
     var(--quarto-body-bg) var(--empty-lower-space)
   );
 }`;
+
+document.head.appendChild(jsOutputStyle);

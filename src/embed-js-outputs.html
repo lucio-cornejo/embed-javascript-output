@@ -37,9 +37,9 @@
 
           for (const arg of arguments) {
             if (arg instanceof Error) {
-              output += '<span class=\'jslog-error\'>'
+              output += '<span class="jslog-error">'
             } else {
-              output += `<span class=\'jslog-${typeof arg}\'>`
+              output += `<span class="jslog-${typeof arg}">`
             }
 
             if (arg instanceof Node) {
@@ -139,14 +139,14 @@
       jsChunks.forEach( (chunk) => {
         // https://stackoverflow.com/questions/31894197/
         const jsCode = chunk.innerHTML
-          .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['\'][\s\S]*?['\'])/gi, '')
+          .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
           .trim()
           .replaceAll('&gt;', '>')   // Deal with use of Arrow Functions.
           .replaceAll('&lt;', '<');  // Deal with < as a math operation.
 
         // Create container for the JavaScript outputs in text form
         const outputContainer = chunk;
-        outputContainer.innerHTML += '<div class=\'jslog-output\'></div>';
+        outputContainer.innerHTML += '<div class="jslog-output"></div>';
         const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
         chunkResult(jsCode);
       });

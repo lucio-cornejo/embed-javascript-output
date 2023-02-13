@@ -123,10 +123,14 @@
   // `output: html_document` required to
   // wait at most two seconds (for my pc and
   // example file in /examples).
-  document.addEventListener('readystatechange', function () {
-    if (document.readyState == 'complete') {
+  
+  // document.addEventListener('readystatechange', function () {
+    // if (document.readyState == 'complete') {
+    (async function() {
+      await new Promise(r => setTimeout(r, 5000));
+
       const jsChunkStructure = 
-        // Xaringan presentation
+      // Xaringan presentation
         typeof slideshow !== 'undefined'
           ? 'pre:has(code.js)' 
           // R Markdown's `output: html_document`
@@ -143,15 +147,16 @@
           .trim()
           .replaceAll('&gt;', '>')   // Deal with use of Arrow Functions.
           .replaceAll('&lt;', '<');  // Deal with < as a math operation.
-
-        // Create container for the JavaScript outputs in text form
-        const outputContainer = chunk;
-        outputContainer.innerHTML += '<div class="jslog-output"></div>';
-        const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
-        chunkResult(jsCode);
-      });
-    } 
-  });
+          
+          // Create container for the JavaScript outputs in text form
+          const outputContainer = chunk;
+          outputContainer.innerHTML += '<div class="jslog-output"></div>';
+          const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
+          chunkResult(jsCode);
+        });
+    })();
+    // } 
+  // });
 </script>
 
 <style>

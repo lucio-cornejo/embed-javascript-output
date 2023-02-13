@@ -97,12 +97,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="quarto_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="quarto_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-<!-- 
-  Insert JavaScript chunk outputs into the website, 
-  via a partly equal procedure as js4shiny:
-  https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/inst/redirect/redirectConsoleLog.js
--->
 <script>
+  /*
+    Insert JavaScript chunk outputs into the website, 
+    via a partly equal procedure as js4shiny:
+    https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/inst/redirect/redirectConsoleLog.js
+  */
   const nodeListInclude = ['id', 'tagName', 'className', 'childNodes']
 
   function domToObj (del) {
@@ -203,20 +203,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       }
     }
   })(window.console)
-</script>
 
-<!-- 
-  To obtain the code of the JavaScript chunks,
-  we could not rely on the method from js4shiny
-  (https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/R/knitr.R)
-  because in that case the code gets extracted from the 
-  rendered document's markdown file.
 
-  Therefore, we'll extract the chunks' JavaScript code
-  via the HTML container into which they are inserted
-  into (usually a div or a pre HTML element).
--->
-<script>
+  /*  
+    To obtain the code of the JavaScript chunks,
+    we could not rely on the method from js4shiny
+    (https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/R/knitr.R)
+    because in that case the code gets extracted from the 
+    rendered document's markdown file.
+
+    Therefore, we'll extract the chunks' JavaScript code
+    via the HTML container into which they are inserted
+    into (usually a div or a pre HTML element).
+  */
   // Adding a DOMContentLoaded event listener
   // to document worked fine, but only for
   // Quarto and Xaringan ... R Markdown's
@@ -224,44 +223,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   // wait at most two seconds (for my pc and
   // example file in /examples).
   document.addEventListener('readystatechange', function () {
-    if (document.readyState == "complete") {
+    if (document.readyState == 'complete') {
       const jsChunkStructure = 
-        // Xaringan presentation
+      // Xaringan presentation
         typeof slideshow !== 'undefined'
           ? 'pre:has(code.js)' 
           // R Markdown's `output: html_document`
           : document.querySelector('div.sourceCode') === null 
           ? 'pre:has(code.javascript)' 
-          // Quarto's `format: html`
-          : 'div.sourceCode:has(pre.js)';
-
+          // Quarto's `format: html` and js chunk, not ojs.
+          : 'div.sourceCode:has(pre.js):not(:has(+ div .observablehq))';
+    
       const jsChunks = document.querySelectorAll(jsChunkStructure);
       jsChunks.forEach( (chunk) => {
         // https://stackoverflow.com/questions/31894197/
         const jsCode = chunk.innerHTML
-          .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, "")
+          .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
           .trim()
-          .replaceAll("&gt;", ">")   // Deal with use of Arrow Functions.
-          .replaceAll("&lt;", "<");  // Deal with < as a math operation.
-
-        // Create container for the JavaScript outputs in text form
-        const outputContainer = chunk;
-        outputContainer.innerHTML += '<div class="jslog-output"></div>';
-        const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
-        chunkResult(jsCode);
-      });
+          .replaceAll('&gt;', '>')   // Deal with use of Arrow Functions.
+          .replaceAll('&lt;', '<');  // Deal with < as a math operation.
+          
+          // Create container for the JavaScript outputs in text form
+          const outputContainer = chunk;
+          outputContainer.innerHTML += '<div class="jslog-output"></div>';
+          const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
+          chunkResult(jsCode);
+        }
+      );
     } 
   });
 </script>
 
-<!-- 
-  Not only will the JavaScript chunks' outputs will
-  be styled for aesthetic reasons, but also due to
-  the small changes we applied to gadenbuie's code.
-  For example, using `display: flex` instead of
-  inserting `<br>` elements into each inserted span.
--->
 <style>
+  /*
+    Not only will the JavaScript chunks' outputs will
+    be styled for aesthetic reasons, but also due to
+    the small changes we applied to gadenbuie's code.
+    For example, using `display: flex` instead of
+    inserting `<br>` elements into each inserted span.
+  */
   @import url('https://fonts.cdnfonts.com/css/cascadia-code');
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100&display=swap');
 
@@ -277,7 +277,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   .jslog-output::before {
     margin: 0.4em;
     white-space: pre;
-    content: "Output: \a";
+    content: 'Output: \a';
     font-family: 'Cascadia Code', sans-serif;
   }
   /* Lines of generated output */
@@ -308,6 +308,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     the chunk's code and its output.
   */
   .jslog-output {
+    font-size: max(16px, 0.6em);
     --empty-upper-space: 12px;
     --empty-lower-space: calc(2*var(--empty-upper-space));
     padding-top: var(--empty-upper-space);

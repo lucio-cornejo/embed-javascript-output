@@ -3,7 +3,7 @@ title: JavaScript embedded R Markdown
 output: 
   html_document:
     includes:
-      in_header: "../src/embed-js-outputs.html"
+      in_header: "https://raw.githubusercontent.com/lucio-cornejo/embed-javascript-output/main/src/embed-js-outputs.html"
 ---
 
 ```{r}

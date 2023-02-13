@@ -11,12 +11,12 @@
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
     <link href="xaringan_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
     <link href="xaringan_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
-    <!-- 
-      Insert JavaScript chunk outputs into the website, 
-      via a partly equal procedure as js4shiny:
-      https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/inst/redirect/redirectConsoleLog.js
-    -->
     <script>
+      /*
+        Insert JavaScript chunk outputs into the website, 
+        via a partly equal procedure as js4shiny:
+        https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/inst/redirect/redirectConsoleLog.js
+      */
       const nodeListInclude = ['id', 'tagName', 'className', 'childNodes']
 
       function domToObj (del) {
@@ -119,18 +119,18 @@
       })(window.console)
     </script>
 
-    <!-- 
-      To obtain the code of the JavaScript chunks,
-      we could not rely on the method from js4shiny
-      (https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/R/knitr.R)
-      because in that case the code gets extracted from the 
-      rendered document's markdown file.
-
-      Therefore, we'll extract the chunks' JavaScript code
-      via the HTML container into which they are inserted
-      into (usually a div or a pre HTML element).
-    -->
     <script>
+      /*  
+        To obtain the code of the JavaScript chunks,
+        we could not rely on the method from js4shiny
+        (https://github.com/gadenbuie/js4shiny/blob/29bd23560d8f1c8ff39db08495f8eb6fe44e30bc/R/knitr.R)
+        because in that case the code gets extracted from the 
+        rendered document's markdown file.
+
+        Therefore, we'll extract the chunks' JavaScript code
+        via the HTML container into which they are inserted
+        into (usually a div or a pre HTML element).
+      */
       // Adding a DOMContentLoaded event listener
       // to document worked fine, but only for
       // Quarto and Xaringan ... R Markdown's
@@ -146,9 +146,9 @@
               // R Markdown's `output: html_document`
               : document.querySelector('div.sourceCode') === null 
               ? 'pre:has(code.javascript)' 
-              // Quarto's `format: html`
-              : 'div.sourceCode:has(pre.js)';
-
+              // Quarto's `format: html` and js chunk, not ojs.
+              : 'div.sourceCode:has(pre.js):not(:has(+ div .observablehq))';
+        
           const jsChunks = document.querySelectorAll(jsChunkStructure);
           jsChunks.forEach( (chunk) => {
             // https://stackoverflow.com/questions/31894197/
@@ -168,14 +168,14 @@
       });
     </script>
 
-    <!-- 
-      Not only will the JavaScript chunks' outputs will
-      be styled for aesthetic reasons, but also due to
-      the small changes we applied to gadenbuie's code.
-      For example, using `display: flex` instead of
-      inserting `<br>` elements into each inserted span.
-    -->
     <style>
+      /*
+        Not only will the JavaScript chunks' outputs will
+        be styled for aesthetic reasons, but also due to
+        the small changes we applied to gadenbuie's code.
+        For example, using `display: flex` instead of
+        inserting `<br>` elements into each inserted span.
+      */
       @import url('https://fonts.cdnfonts.com/css/cascadia-code');
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100&display=swap');
 
@@ -222,6 +222,7 @@
         the chunk's code and its output.
       */
       .jslog-output {
+        font-size: max(16px, 0.6em);
         --empty-upper-space: 12px;
         --empty-lower-space: calc(2*var(--empty-upper-space));
         padding-top: var(--empty-upper-space);

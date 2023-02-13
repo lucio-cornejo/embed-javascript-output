@@ -28,7 +28,7 @@ this JavaScript output embedding to work in your project.
     output:
       # ...
       includes:
-        in_header: "../src/embed-js-outputs.html"
+        in_header: "https://raw.githubusercontent.com/lucio-cornejo/embed-javascript-output/main/src/embed-js-outputs.html"
     ```
 - **Quarto**
     ```yaml

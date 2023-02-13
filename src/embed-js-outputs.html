@@ -123,10 +123,8 @@
   // `output: html_document` required to
   // wait at most two seconds (for my pc and
   // example file in /examples).
-  
-  // document.addEventListener('readystatechange', function () {
-    // if (document.readyState == 'complete') {
-    function embedJsOutputs() {
+  document.addEventListener('readystatechange', function () {
+    if (document.readyState == 'complete') {
       const jsChunkStructure = 
       // Xaringan presentation
         typeof slideshow !== 'undefined'
@@ -151,10 +149,10 @@
           outputContainer.innerHTML += '<div class="jslog-output"></div>';
           const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
           chunkResult(jsCode);
-        });
-    };
-    // } 
-  // });
+        }
+      );
+    } 
+  });
 </script>
 
 <style>

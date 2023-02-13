@@ -126,9 +126,7 @@
   
   // document.addEventListener('readystatechange', function () {
     // if (document.readyState == 'complete') {
-    (async function() {
-      await new Promise(r => setTimeout(r, 5000));
-
+    function embedJsOutputs() {
       const jsChunkStructure = 
       // Xaringan presentation
         typeof slideshow !== 'undefined'
@@ -154,7 +152,7 @@
           const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
           chunkResult(jsCode);
         });
-    })();
+    };
     // } 
   // });
 </script>

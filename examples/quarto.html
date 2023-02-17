@@ -136,9 +136,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
           for (const arg of arguments) {
             if (arg instanceof Error) {
-              output += '<span class="jslog-error">'
+              output += "<span class='jslog-erro'>"
             } else {
-              output += `<span class="jslog-${typeof arg}">`
+              output += `<span class='jslog-${typeof arg}'>`
             }
 
             if (arg instanceof Node) {
@@ -222,8 +222,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   // `output: html_document` required to
   // wait at most two seconds (for my pc and
   // example file in /examples).
-  document.addEventListener('readystatechange', function () {
-    if (document.readyState == 'complete') {
+  document.addEventListener('readystatechange', embedJsOutputs)
+  
+  // Press Alt+j to reevaluate the js chunks
+  document.addEventListener('keydown', function(event) {
+    if (event.altKey && event.key === "j") {
+      embedJsOutputs();
+    }
+  });
+  
+  function embedJsOutputs() {
+    if (document.readyState === 'complete') {
+      if (document.querySelector(".jslog-output")) {
+        document.querySelectorAll(".jslog-output")
+          .forEach(output => output.remove());
+      }
+
       const jsChunkStructure = 
       // Xaringan presentation
         typeof slideshow !== 'undefined'
@@ -236,9 +250,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     
       const jsChunks = document.querySelectorAll(jsChunkStructure);
       jsChunks.forEach( (chunk) => {
+        // Make js code chunks editable, to allow
+        // user to change and reevaluate their code.
+        chunk.setAttribute("contentEditable", true);
+
         // https://stackoverflow.com/questions/31894197/
         const jsCode = chunk.innerHTML
-          .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
+          .replace(/(<\/?(div|pre|code|span|a|font|b|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
           .trim()
           .replaceAll('&gt;', '>')   // Deal with use of Arrow Functions.
           .replaceAll('&lt;', '<');  // Deal with < as a math operation.
@@ -251,7 +269,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         }
       );
     } 
-  });
+  }
 </script>
 
 <style>

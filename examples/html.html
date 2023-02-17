@@ -265,9 +265,9 @@ color: #d14;
 
           for (const arg of arguments) {
             if (arg instanceof Error) {
-              output += '<span class="jslog-error">'
+              output += "<span class='jslog-erro'>"
             } else {
-              output += `<span class="jslog-${typeof arg}">`
+              output += `<span class='jslog-${typeof arg}'>`
             }
 
             if (arg instanceof Node) {
@@ -332,9 +332,8 @@ color: #d14;
       }
     }
   })(window.console)
-</script>
 
-<script>
+
   /*  
     To obtain the code of the JavaScript chunks,
     we could not rely on the method from js4shiny
@@ -352,10 +351,24 @@ color: #d14;
   // `output: html_document` required to
   // wait at most two seconds (for my pc and
   // example file in /examples).
-  document.addEventListener('readystatechange', function () {
-    if (document.readyState == "complete") {
+  document.addEventListener('readystatechange', embedJsOutputs)
+  
+  // Press Alt+j to reevaluate the js chunks
+  document.addEventListener('keydown', function(event) {
+    if (event.altKey && event.key === "j") {
+      embedJsOutputs();
+    }
+  });
+  
+  function embedJsOutputs() {
+    if (document.readyState === 'complete') {
+      if (document.querySelector(".jslog-output")) {
+        document.querySelectorAll(".jslog-output")
+          .forEach(output => output.remove());
+      }
+
       const jsChunkStructure = 
-        // Xaringan presentation
+      // Xaringan presentation
         typeof slideshow !== 'undefined'
           ? 'pre:has(code.js)' 
           // R Markdown's `output: html_document`
@@ -366,21 +379,26 @@ color: #d14;
     
       const jsChunks = document.querySelectorAll(jsChunkStructure);
       jsChunks.forEach( (chunk) => {
+        // Make js code chunks editable, to allow
+        // user to change and reevaluate their code.
+        chunk.setAttribute("contentEditable", true);
+
         // https://stackoverflow.com/questions/31894197/
         const jsCode = chunk.innerHTML
-          .replace(/(<\/?(div|pre|code|span|a|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, "")
+          .replace(/(<\/?(div|pre|code|span|a|font|b|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
           .trim()
-          .replaceAll("&gt;", ">")   // Deal with use of Arrow Functions.
-          .replaceAll("&lt;", "<");  // Deal with < as a math operation.
-
-        // Create container for the JavaScript outputs in text form
-        const outputContainer = chunk;
-        outputContainer.innerHTML += '<div class="jslog-output"></div>';
-        const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
-        chunkResult(jsCode);
-      });
+          .replaceAll('&gt;', '>')   // Deal with use of Arrow Functions.
+          .replaceAll('&lt;', '<');  // Deal with < as a math operation.
+          
+          // Create container for the JavaScript outputs in text form
+          const outputContainer = chunk;
+          outputContainer.innerHTML += '<div class="jslog-output"></div>';
+          const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
+          chunkResult(jsCode);
+        }
+      );
     } 
-  });
+  }
 </script>
 
 <style>
@@ -406,7 +424,7 @@ color: #d14;
   .jslog-output::before {
     margin: 0.4em;
     white-space: pre;
-    content: "Output: \a";
+    content: 'Output: \a';
     font-family: 'Cascadia Code', sans-serif;
   }
   /* Lines of generated output */

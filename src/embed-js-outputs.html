@@ -133,7 +133,7 @@
   });
   
   function embedJsOutputs() {
-    if (document.readyState == 'complete') {
+    if (document.readyState === 'complete') {
       if (document.querySelector(".jslog-output")) {
         document.querySelectorAll(".jslog-output")
           .forEach(output => output.remove());
@@ -157,7 +157,7 @@
 
         // https://stackoverflow.com/questions/31894197/
         const jsCode = chunk.innerHTML
-          .replace(/(<\/?(div|pre|code|span|a|font|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
+          .replace(/(<\/?(div|pre|code|span|a|font|b|button|i)[\s\S]*?>)|((style|class|id|lang|) ?\= ?['"][\s\S]*?['"])/gi, '')
           .trim()
           .replaceAll('&gt;', '>')   // Deal with use of Arrow Functions.
           .replaceAll('&lt;', '<');  // Deal with < as a math operation.

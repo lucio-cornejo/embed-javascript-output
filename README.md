@@ -1,6 +1,12 @@
-- The purpose of this project is to include
+The purpose of this project is to include
 the output of **JavaScript chunks** into the
 generated HTML document.
+
+Besides this, the JavaScript **chunks** are also
+**editable** (in the HTML page), so, you can change
+their code and then press `Alt+j` in order to 
+**re-execute** the js chunks and update their
+respective outputs.
 
 - This implementation works for:
     - Quarto's `format: html` documents.

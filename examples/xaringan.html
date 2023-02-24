@@ -140,9 +140,12 @@
       
       // Press Alt+j to reevaluate the js chunks
       document.addEventListener('keydown', function(event) {
-        if (event.altKey && event.key === "j") {
-          embedJsOutputs();
-        }
+        if (event.repeat) return;
+
+        if (
+          event.altKey && 
+          event.key.toLowerCase() === "j"
+        ) { embedJsOutputs() }
       });
       
       function embedJsOutputs() {
@@ -178,7 +181,13 @@
               // Create container for the JavaScript outputs in text form
               const outputContainer = chunk;
               outputContainer.innerHTML += '<div class="jslog-output"></div>';
-              const chunkResult = redirectLogger(outputContainer.querySelector('div.jslog-output'));
+              
+              // Adapt CSS color of js output
+              const jsLogOutput = outputContainer.querySelector('div.jslog-output');
+              jsLogOutput.style.color = getComputedStyle(chunk).color;
+
+              // Embed js output
+              const chunkResult = redirectLogger(jsLogOutput);
               chunkResult(jsCode);
             }
           );

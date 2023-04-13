@@ -147,7 +147,7 @@
         typeof slideshow !== 'undefined'
           ? 'pre:has(code.js)' 
           // R Markdown's `output: html_document`
-          : document.querySelector('div.sourceCode') !== null 
+          : document.querySelector('div.sourceCode') === null 
           ? 'pre:has(code.javascript)' 
           // Quarto's `format: html` and js chunk, not ojs.
           : 'div.sourceCode:has(pre.js):not(:has(+ div .observablehq))';
